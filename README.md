@@ -1,5 +1,9 @@
 # 🐝 Bienenstock — Event Management System
 
+Note of thanks:
+
+I thank my friend Giovani Grosso for providing the resources for the first steps of this endeavor.
+
 [![Version](https://img.shields.io/badge/version-0.001-blue.svg)]()
 [![PHP](https://img.shields.io/badge/PHP-7.4%2B-purple.svg)]()
 [![MySQL](https://img.shields.io/badge/MySQL-5.6%2B-orange.svg)]()
@@ -501,6 +505,10 @@ $_SESSION['user_email'] // User email
 # Documentação em Português
 
 **Sistema standalone PHP para gestão completa de eventos: inscrições, check-in por QR code, grades de programação, certificados PDF e links públicos — sem depender de WordPress ou frameworks externos.**
+
+Nota de agradecimento:
+
+Agradeço ao meu amigo Giovani Grosso por ter proporcionado os recursos para os primeiros passos desta empreitada.
 
 ---
 
