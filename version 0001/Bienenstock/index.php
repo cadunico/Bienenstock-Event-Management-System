@@ -28,26 +28,20 @@ session_start();
 define('BASE', __DIR__);
 $config = BASE . '/config.php';
 
+// Configuração disponível via variáveis de ambiente (Docker)?
+$has_env_config = (getenv('DB_HOST') !== false && getenv('DB_NAME') !== false && getenv('DB_USER') !== false);
+
 // Redirecionar para instalação se necessário
-if (!file_exists($config)) {
+if (!file_exists($config) && !$has_env_config) {
     if (basename($_SERVER['SCRIPT_NAME']) !== 'install.php') {
         header('Location: install.php');
         exit;
     }
 }
 
-// Conectar banco
-if (file_exists($config)) {
-    require $config;
-    try {
-        $db = new PDO("mysql:host=$host;dbname=$name;charset=utf8mb4", $user, $pass, array(
-            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
-            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC
-        ));
-    } catch (PDOException $e) {
-        die('Erro DB: ' . $e->getMessage());
-    }
-}
+// Carrega configuração + conexão ($db, $host, $name, $user, $pass).
+// Prioridade: variáveis de ambiente > config.php (veja bootstrap.php).
+require __DIR__ . '/bootstrap.php';
 
 // ==================== HELPERS ====================
 function db() { global $db; return $db; }

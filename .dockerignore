@@ -1,0 +1,10 @@
+.git
+.gitignore
+Download/
+*.zip
+Dockerfile
+docker-compose.yml
+.env
+.env.*
+!.env.example
+README.md

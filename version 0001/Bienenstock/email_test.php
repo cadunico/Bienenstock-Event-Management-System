@@ -4,11 +4,7 @@
  * Acesse via browser. REMOVA após o diagnóstico.
  */
 define('BASE', __DIR__);
-require BASE . '/config.php';
-try {
-    $db = new PDO("mysql:host=$host;dbname=$name;charset=utf8mb4", $user, $pass,
-        [PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION, PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC]);
-} catch (PDOException $e) { die('Erro DB: ' . $e->getMessage()); }
+require BASE . '/bootstrap.php';
 require_once BASE . '/smtp_mailer.php';
 
 $rows       = $db->query("SELECT setting_key, setting_value FROM settings")->fetchAll(PDO::FETCH_KEY_PAIR);

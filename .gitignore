@@ -1,0 +1,11 @@
+# Configuração e dados gerados em runtime
+config.php
+uploads/
+
+# Ambiente local (segredos)
+.env
+
+# Artefatos
+Download/
+*.zip
+.docker-config/

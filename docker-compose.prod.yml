@@ -1,0 +1,68 @@
+services:
+  db:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:?defina MYSQL_ROOT_PASSWORD no .env}
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-bienenstock}
+      MYSQL_USER: ${MYSQL_USER:-bienenstock}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:?defina MYSQL_PASSWORD no .env}
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - db_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-p${MYSQL_ROOT_PASSWORD:?defina MYSQL_ROOT_PASSWORD no .env}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - bienenstock
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_HOST: db
+      DB_NAME: ${MYSQL_DATABASE:-bienenstock}
+      DB_USER: ${MYSQL_USER:-bienenstock}
+      DB_PASS: ${MYSQL_PASSWORD:?defina MYSQL_PASSWORD no .env}
+      ADMIN_NAME: ${ADMIN_NAME:-Administrador}
+      ADMIN_EMAIL: ${ADMIN_EMAIL:?defina ADMIN_EMAIL no .env}
+      ADMIN_PASS: ${ADMIN_PASS:?defina ADMIN_PASS no .env}
+    volumes:
+      - uploads_data:/var/www/html/uploads
+    networks:
+      - bienenstock
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - app
+    environment:
+      DOMAIN: ${DOMAIN:?defina DOMAIN no .env}
+      ACME_EMAIL: ${ACME_EMAIL:?defina ACME_EMAIL no .env}
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"   # HTTP/3 (QUIC)
+    volumes:
+      - ./docker/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    networks:
+      - bienenstock
+
+volumes:
+  db_data:
+  uploads_data:
+  caddy_data:
+  caddy_config:
+
+networks:
+  bienenstock:

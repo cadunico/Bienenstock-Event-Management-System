@@ -1,0 +1,18 @@
+# BIENENSTOCK — Caddyfile de produção
+# As referências {$VAR} são resolvidas a partir das variáveis de ambiente
+# do container (definidas no docker-compose.prod.yml).
+
+{
+	email {$ACME_EMAIL}
+}
+
+{$DOMAIN} {
+	encode zstd gzip
+
+	# Encaminha para a aplicação (PHP/Apache).
+	# Caddy já define X-Forwarded-For / X-Forwarded-Proto / X-Forwarded-Host;
+	# repassamos o Host original para o app gerar URLs públicas corretas.
+	reverse_proxy app:80 {
+		header_up Host {host}
+	}
+}
