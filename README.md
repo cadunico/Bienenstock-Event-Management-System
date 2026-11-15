@@ -147,6 +147,54 @@ $pass = 'mysql_password';
 ```
 5. Access the system in the browser
 
+### Method 3: Run with Docker 🐳
+
+The quickest way to run locally — no PHP/MySQL setup needed on your machine.
+
+```bash
+# 1. Copy the environment template and adjust credentials
+cp .env.example .env
+
+# 2. Build and start the stack (PHP 8.2 + Apache + MySQL 8.0)
+docker compose up -d --build
+
+# 3. Open the app
+open http://localhost:8080   # Linux: xdg-open http://localhost:8080
+```
+
+**Default admin login:** `admin@example.com` / `admin123` (override via `ADMIN_EMAIL` / `ADMIN_PASS` in `.env`).
+
+On first boot, the entrypoint automatically creates the database, tables and admin user from `.env`:
+
+| Variable | Default | Description |
+|----------|---------|-------------|
+| `MYSQL_ROOT_PASSWORD` | `root` | MySQL root password |
+| `MYSQL_DATABASE` | `bienenstock` | Database name |
+| `MYSQL_USER` / `MYSQL_PASSWORD` | `bienenstock` / `bienenstock` | App DB credentials |
+| `ADMIN_NAME` | `Administrador` | Initial admin name |
+| `ADMIN_EMAIL` | `admin@example.com` | Initial admin e-mail |
+| `ADMIN_PASS` | `admin123` | Initial admin password |
+| `APP_PORT` | `8080` | Host port mapped to the app |
+
+> 🔒 Change `MYSQL_*` and `ADMIN_PASS` in `.env` before exposing the stack publicly.
+> Data persists in the named volumes `db_data` (MySQL) and `uploads_data` (uploads/certificates).
+
+The app now reads its configuration from environment variables (`DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS`) with fallback to `config.php`, so the same code runs unchanged on classic shared hosting.
+
+#### Production with Caddy (automatic HTTPS) 🔒
+
+For a public server, use the Caddy reverse proxy with automatic TLS from Let's Encrypt:
+
+```bash
+# In .env, add (see .env.example):
+DOMAIN=eventos.example.com
+ACME_EMAIL=you@example.com
+
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+Caddy terminates HTTPS (ports 80/443) and forwards to the app. The app detects the original scheme via `X-Forwarded-Proto`, so public links and the webcam check-in work correctly over HTTPS. Certificates are stored in the `caddy_data` volume and renewed automatically.
+
 ### Post-installation
 
 After installing, the system automatically creates:
@@ -638,6 +686,44 @@ $user = 'usuario_mysql';
 $pass = 'senha_mysql';
 ```
 5. Acesse o sistema no navegador
+
+### Método 3: Rodar com Docker 🐳
+
+A forma mais rápida de rodar localmente — sem precisar instalar PHP/MySQL na sua máquina.
+
+```bash
+# 1. Copie o modelo de ambiente e ajuste as credenciais
+cp .env.example .env
+
+# 2. Suba o stack (PHP 8.2 + Apache + MySQL 8.0)
+docker compose up -d --build
+
+# 3. Abra o sistema
+xdg-open http://localhost:8080   # ou acesse manualmente no navegador
+```
+
+**Login admin padrão:** `admin@example.com` / `admin123` (altere via `ADMIN_EMAIL` / `ADMIN_PASS` no `.env`).
+
+Na primeira subida, o entrypoint cria automaticamente o banco, as tabelas e o usuário admin a partir do `.env` (veja a tabela de variáveis na seção em inglês acima).
+
+> 🔒 Altere `MYSQL_*` e `ADMIN_PASS` no `.env` antes de expor o stack publicamente.
+> Os dados persistem nos volumes nomeados `db_data` (MySQL) e `uploads_data` (uploads/certificados).
+
+A aplicação agora lê a configuração de variáveis de ambiente (`DB_HOST`, `DB_NAME`, `DB_USER`, `DB_PASS`) com fallback para `config.php`, então o mesmo código roda sem alterações em hospedagem compartilhada clássica.
+
+#### Produção com Caddy (HTTPS automático) 🔒
+
+Para um servidor público, use o proxy reverso Caddy com TLS automático do Let's Encrypt:
+
+```bash
+# No .env, adicione (veja .env.example):
+DOMAIN=eventos.exemplo.com
+ACME_EMAIL=voce@exemplo.com
+
+docker compose -f docker-compose.prod.yml up -d --build
+```
+
+O Caddy termina o HTTPS (portas 80/443) e encaminha para a aplicação. O app detecta o esquema original via `X-Forwarded-Proto`, então os links públicos e o check-in por webcam funcionam corretamente em HTTPS. Os certificados ficam no volume `caddy_data` e são renovados automaticamente.
 
 ### Pós-instalação
 

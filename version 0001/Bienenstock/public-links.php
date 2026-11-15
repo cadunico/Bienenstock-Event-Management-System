@@ -12,9 +12,7 @@
  *   https://creativecommons.org/licenses/by-sa/3.0/
  */
 session_start();
-require 'config.php';
-$db = new PDO("mysql:host=$host;dbname=$name;charset=utf8mb4", $user, $pass);
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+require __DIR__ . '/bootstrap.php';
 
 // Carrega SMTP Mailer no topo — fora de funções para garantir disponibilidade
 if (file_exists(__DIR__ . '/smtp_mailer.php')) {

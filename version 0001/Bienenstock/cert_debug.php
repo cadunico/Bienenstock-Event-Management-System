@@ -5,9 +5,7 @@
  */
 if (($_GET['secret'] ?? '') !== 'debug2024') { http_response_code(403); exit('Forbidden'); }
 define('BASE', __DIR__);
-require_once __DIR__ . '/config.php';
-$db = new PDO("mysql:host=$host;dbname=$name;charset=utf8mb4", $user, $pass);
-$db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+require_once __DIR__ . '/bootstrap.php';
 function db() { global $db; return $db; }
 
 echo '<pre style="font-family:monospace;font-size:12px;background:#111;color:#0f0;padding:20px;white-space:pre-wrap;word-break:break-all">';
